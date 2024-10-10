@@ -7,6 +7,7 @@ import mplfinance as mpf
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
+
 def get_stock_data(ticker, start_date, end_date):
     stock = yf.Ticker(ticker)
     hist = stock.history(start=start_date, end=end_date)
