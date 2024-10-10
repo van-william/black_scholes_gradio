@@ -18,9 +18,11 @@ def black_scholes(S, K, T, r, sigma, option_type='call'):
     
     if option_type == 'call':
         option_price = (S * si.norm.cdf(d1, 0.0, 1.0) - K * np.exp(-r * T) * si.norm.cdf(d2, 0.0, 1.0))
-    else:  # put option
+    elif option_type == 'put':
         option_price = (K * np.exp(-r * T) * si.norm.cdf(-d2, 0.0, 1.0) - S * si.norm.cdf(-d1, 0.0, 1.0))
-    
+    else:
+        raise Exception("Must be call or put")
+        
     return option_price
 
 def calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_rate, option_type):
@@ -29,7 +31,7 @@ def calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_r
     
     # Try to get the current price from different sources
     try:
-        current_price = stock.info.get('regularMarketPrice') or stock.info.get('currentPrice')
+        current_price = stock.info.get('currentPrice')
         if current_price is None:
             current_price = stock.history(period="1d")['Close'].iloc[-1]
     except Exception as e:
