@@ -1,6 +1,6 @@
 ---
 title: Black Scholes
-emoji: 🎥
+emoji: 📈
 colorTo: gray
 sdk: gradio
 sdk_version: 4.25.0
