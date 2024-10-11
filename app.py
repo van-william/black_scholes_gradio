@@ -28,7 +28,7 @@ def black_scholes(S, K, T, r, sigma, q=0, option_type='call'):
         
     return option_price
 
-def calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_rate, option_type):
+def calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_rate, dividend_rate, option_type):
     # Get current stock price
     stock = yf.Ticker(ticker)
     
@@ -53,7 +53,7 @@ def calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_r
     
     # Calculate option price
     T = days_to_expiration / 365
-    option_price = black_scholes(current_price, strike_price, T, risk_free_rate, sigma, option_type)
+    option_price = black_scholes(current_price, strike_price, T, risk_free_rate, sigma, dividend_rate, option_type)
     
     return option_price, current_price, sigma
 
