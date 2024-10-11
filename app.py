@@ -13,16 +13,18 @@ def get_stock_data(ticker, start_date, end_date):
     hist = stock.history(start=start_date, end=end_date)
     return hist
 
-def black_scholes(S, K, T, r, sigma, option_type='call'):
-    d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+def black_scholes(S, K, T, r, sigma, q=0, option_type='call'):
+    d1 = (np.log(S / K) + (r - q + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
     
     if option_type == 'call':
-        option_price = (S * si.norm.cdf(d1, 0.0, 1.0) - K * np.exp(-r * T) * si.norm.cdf(d2, 0.0, 1.0))
+        option_price = (S * np.exp(-q * T) * si.norm.cdf(d1, 0.0, 1.0) - 
+                        K * np.exp(-r * T) * si.norm.cdf(d2, 0.0, 1.0))
     elif option_type == 'put':
-        option_price = (K * np.exp(-r * T) * si.norm.cdf(-d2, 0.0, 1.0) - S * si.norm.cdf(-d1, 0.0, 1.0))
+        option_price = (K * np.exp(-r * T) * si.norm.cdf(-d2, 0.0, 1.0) - 
+                        S * np.exp(-q * T) * si.norm.cdf(-d1, 0.0, 1.0))
     else:
-        raise Exception("Must be call or put")
+        raise ValueError("option_type must be 'call' or 'put'")
         
     return option_price
 
@@ -72,9 +74,9 @@ def plot_stock_data(ticker):
     fig.update_layout(title=f'{ticker} Stock Price', xaxis_title='Date', yaxis_title='Price')
     return fig
 
-def app_interface(ticker, strike_price, days_to_expiration, risk_free_rate, option_type):
+def app_interface(ticker, strike_price, days_to_expiration, risk_free_rate, dividend_rate, option_type):
     try:
-        option_price, current_price, volatility = calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_rate, option_type)
+        option_price, current_price, volatility = calculate_option_price(ticker, strike_price, days_to_expiration, risk_free_rate, dividend_rate, option_type)
         stock_chart = plot_stock_data(ticker)
         
         result = f"""
@@ -96,6 +98,7 @@ iface = gr.Interface(
         gr.Number(label="Strike Price"),
         gr.Slider(minimum=1, maximum=365, step=1, label="Days to Expiration"),
         gr.Slider(minimum=0, maximum=0.1, step=0.001, label="Risk-Free Rate"),
+        gr.Slider(minimum=0, maximum=0.2, step=0.001, label="Dividend Rate"),
         gr.Radio(["call", "put"], label="Option Type")
     ],
     outputs=[
