@@ -268,4 +268,4 @@ iface = gr.Interface(
 
 # Launch the app with MCP server
 if __name__ == "__main__":
-    iface.launch()
+    iface.launch(mcp_server=True)
