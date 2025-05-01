@@ -123,7 +123,9 @@ def calculate_option_price(
     
     return option_price, current_price, sigma
 
-def plot_stock_data(ticker: str) -> go.Figure:
+
+
+def plot_stock_data(ticker):
     """
     Create an interactive candlestick chart for the given stock.
     
@@ -139,22 +141,17 @@ def plot_stock_data(ticker: str) -> go.Figure:
     end_date = datetime.now()
     start_date = end_date - timedelta(days=180)
     data = get_stock_data(ticker, start_date, end_date)
-    
+
     if data.empty:
         raise ValueError(f"No historical data available for {ticker}")
-    
+
     fig = go.Figure(data=[go.Candlestick(x=data.index,
                 open=data['Open'],
                 high=data['High'],
                 low=data['Low'],
                 close=data['Close'])])
-    
-    fig.update_layout(
-        title=f'{ticker} Stock Price',
-        xaxis_title='Date',
-        yaxis_title='Price',
-        template='plotly_white'
-    )
+
+    fig.update_layout(title=f'{ticker} Stock Price', xaxis_title='Date', yaxis_title='Price')
     return fig
 
 def app_interface(
